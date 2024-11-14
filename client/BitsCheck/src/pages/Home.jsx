@@ -67,40 +67,6 @@ const Home = () => {
           padding: '0 16px',
         }}
       >
-        {/* Sidebar Filters */}
-        <Box
-          sx={{
-            width: '15%',
-            padding: '16px',
-            backgroundColor: '#f8f8f8',
-            borderRadius: '8px',
-            display: { xs: 'none', md: 'block' },
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            Filters
-          </Typography>
-          <Box>
-            <Typography variant="subtitle1">Category</Typography>
-            <FormControlLabel control={<Checkbox />} label="New American" />
-            <FormControlLabel control={<Checkbox />} label="Italian" />
-            <FormControlLabel control={<Checkbox />} label="French" />
-            <FormControlLabel control={<Checkbox />} label="Steakhouses" />
-          </Box>
-          <Box sx={{ marginTop: 2 }}>
-            <Typography variant="subtitle1">Features</Typography>
-            <FormControlLabel control={<Checkbox />} label="Outdoor Seating" />
-            <FormControlLabel control={<Checkbox />} label="Good for Lunch" />
-            <FormControlLabel control={<Checkbox />} label="Good for Kids" />
-          </Box>
-          <Box sx={{ marginTop: 2 }}>
-            <Typography variant="subtitle1">Distance</Typography>
-            <FormControlLabel control={<Checkbox />} label="Driving (5 mi)" />
-            <FormControlLabel control={<Checkbox />} label="Biking (2 mi)" />
-            <FormControlLabel control={<Checkbox />} label="Walking (1 mi)" />
-          </Box>
-        </Box>
-
         <Box sx={{ flex: 1 }}>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
