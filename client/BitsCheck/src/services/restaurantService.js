@@ -3,12 +3,10 @@
 // src/services/restaurantService.js
 
 // Function to search restaurants by query using your Spring Boot backend
-export const searchRestaurants = async (query) => {
-  const url = `http://localhost:5000/api/search-restaurants?query=${encodeURIComponent(query)}`;
-  
+// restaurantService.js
+export const searchRestaurants = async (query, lat, lng) => {
   try {
-    const response = await fetch(url, {
-      method: 'GET',
+    const response = await fetch(`/api/search?query=${encodeURIComponent(query)}&lat=${lat}&lng=${lng}`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -16,16 +14,17 @@ export const searchRestaurants = async (query) => {
 
     if (response.ok) {
       const data = await response.json();
-      return data.results || [];
+      return data.results; // Assuming the API returns an array of restaurant objects
     } else {
       console.error(`Error from backend search API (${response.status}): ${response.statusText}`);
       return [];
     }
   } catch (error) {
-    console.error('Error searching for restaurants:', error);
+    console.error('Error during restaurant search:', error);
     return [];
   }
 };
+
 
 
 // src/services/restaurantService.js
@@ -61,24 +60,14 @@ export const getNearbyRestaurants = async (lat, lng) => {
   }
 };
 
-export const getPhotoUrl = async (photoReference) => {
-  try {
-    const response = await fetch(`/api/photo?photoReference=${encodeURIComponent(photoReference)}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (response.ok) {
-      // Convert the response to a blob URL
-      const blob = await response.blob();
-      return URL.createObjectURL(blob);
-    } else {
-      console.error(`Error from backend photo API (${response.status}): ${response.statusText}`);
-      return '';
-    }
-  } catch (error) {
-    console.error('Error fetching photo:', error);
-    return '';
+export const getPhotoUrl = (photoReference) => {
+  if (!photoReference) {
+    console.error('No photo reference provided');
+    return 'https://via.placeholder.com/400'; // Placeholder if no photo reference is provided
   }
+
+  const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY'; // Replace with your actual API key
+  const googlePhotoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=${photoReference}&key=AIzaSyDewJC5STCF9FQRfe1EAVnU8kJvfsRhLPU`;
+
+  return googlePhotoUrl;
 };

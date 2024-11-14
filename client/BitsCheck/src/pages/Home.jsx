@@ -1,10 +1,10 @@
-// src/pages/User/Home.jsx
 import React, { useState, useEffect } from 'react';
-import SearchBar from '../components/SearchBar';
 import RestaurantCard from '../components/RestaurantCard';
 import MapContainer from '../components/Map';
-import { Container,Grid2 } from '@mui/material';
+import { Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { getNearbyRestaurants, searchRestaurants } from '../services/restaurantService';
+import AppHeader from '../components/Header';
+import Footer from '../components/Footer';
 
 const Home = () => {
   const [places, setPlaces] = useState([]);
@@ -35,8 +35,15 @@ const Home = () => {
 
   // Handle search query
   const handleSearch = (query) => {
+    const { lat, lng } = userLocation;
+
+    if (!lat || !lng) {
+      console.warn('User location is not available. Please enable location services.');
+      return;
+    }
+
     if (query) {
-      searchRestaurants(query).then((results) => {
+      searchRestaurants(query, lat, lng).then((results) => {
         setPlaces(results); // Update the state with search results
       }).catch((error) => {
         console.error("Error during restaurant search:", error);
@@ -47,19 +54,92 @@ const Home = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <SearchBar onSearch={handleSearch} />
-      <Grid2 container spacing={2} sx={{ marginTop: 2 }}>
-        <Grid2 xs={12} md={8}>
-          {places.map((restaurant) => (
-            <RestaurantCard key={restaurant.place_id} restaurant={restaurant} />
-          ))}
-        </Grid2>
-        <Grid2 xs={12} md={4}>
-        <MapContainer places={places} setPlaces={setPlaces} />
-        </Grid2>
-      </Grid2>
-    </Container>
+    <>
+      {/* Header Component */}
+      <AppHeader onSearch={handleSearch} />
+
+      {/* Main Content */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '16px',
+          padding: '0 16px',
+        }}
+      >
+        {/* Sidebar Filters */}
+        <Box
+          sx={{
+            width: '15%',
+            padding: '16px',
+            backgroundColor: '#f8f8f8',
+            borderRadius: '8px',
+            display: { xs: 'none', md: 'block' },
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Filters
+          </Typography>
+          <Box>
+            <Typography variant="subtitle1">Category</Typography>
+            <FormControlLabel control={<Checkbox />} label="New American" />
+            <FormControlLabel control={<Checkbox />} label="Italian" />
+            <FormControlLabel control={<Checkbox />} label="French" />
+            <FormControlLabel control={<Checkbox />} label="Steakhouses" />
+          </Box>
+          <Box sx={{ marginTop: 2 }}>
+            <Typography variant="subtitle1">Features</Typography>
+            <FormControlLabel control={<Checkbox />} label="Outdoor Seating" />
+            <FormControlLabel control={<Checkbox />} label="Good for Lunch" />
+            <FormControlLabel control={<Checkbox />} label="Good for Kids" />
+          </Box>
+          <Box sx={{ marginTop: 2 }}>
+            <Typography variant="subtitle1">Distance</Typography>
+            <FormControlLabel control={<Checkbox />} label="Driving (5 mi)" />
+            <FormControlLabel control={<Checkbox />} label="Biking (2 mi)" />
+            <FormControlLabel control={<Checkbox />} label="Walking (1 mi)" />
+          </Box>
+        </Box>
+
+        <Box sx={{ flex: 1 }}>
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              Restaurants in the current map area
+            </Typography>
+          </Box>
+          {/* Restaurant List */}
+          <Box
+            sx={{
+              maxHeight: '100%',
+              overflowY: 'auto',
+              paddingRight: 2,
+            }}
+          >
+            {places.map((restaurant) => (
+              <RestaurantCard key={restaurant.place_id} restaurant={restaurant} />
+            ))}
+          </Box>
+        </Box>
+
+        {/* Map Container */}
+        <Box
+          sx={{
+            width: '30%',
+            position: 'sticky',
+            top: '120px',
+            height: 'calc(100vh - 140px)',
+            overflow: 'hidden',
+            border: '1px solid #e0e0e0',
+            borderRadius: '8px',
+          }}
+        >
+          <MapContainer places={places} userLocation={userLocation} />
+        </Box>
+      </Box>
+
+      {/* Footer Component */}
+      <Footer />
+    </>
   );
 };
 
