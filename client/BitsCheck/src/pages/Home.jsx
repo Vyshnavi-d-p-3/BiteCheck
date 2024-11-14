@@ -23,7 +23,7 @@ const Home = () => {
 
           // Fetch nearby restaurants
           getNearbyRestaurants(location.lat, location.lng).then((results) => {
-            setPlaces(results); // Assuming results is an array of places
+            setPlaces(results);
           });
         },
         (error) => {
@@ -34,7 +34,7 @@ const Home = () => {
   }, []);
 
   // Handle search query
-  const handleSearch = (query) => {
+  const handleSearch = (query, filters) => {
     const { lat, lng } = userLocation;
 
     if (!lat || !lng) {
@@ -43,8 +43,8 @@ const Home = () => {
     }
 
     if (query) {
-      searchRestaurants(query, lat, lng).then((results) => {
-        setPlaces(results); // Update the state with search results
+      searchRestaurants(query, lat, lng, filters).then((results) => {
+        setPlaces(results);
       }).catch((error) => {
         console.error("Error during restaurant search:", error);
       });
@@ -67,20 +67,14 @@ const Home = () => {
           padding: '0 16px',
         }}
       >
+        {/* Restaurant List */}
         <Box sx={{ flex: 1 }}>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               Restaurants in the current map area
             </Typography>
           </Box>
-          {/* Restaurant List */}
-          <Box
-            sx={{
-              maxHeight: '100%',
-              overflowY: 'auto',
-              paddingRight: 2,
-            }}
-          >
+          <Box sx={{ maxHeight: '100%', overflowY: 'auto', paddingRight: 2 }}>
             {places.map((restaurant) => (
               <RestaurantCard key={restaurant.place_id} restaurant={restaurant} />
             ))}

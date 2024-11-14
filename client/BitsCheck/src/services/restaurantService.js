@@ -1,12 +1,18 @@
-// src/api/restaurantService.js
-
-// src/services/restaurantService.js
-
 // Function to search restaurants by query using your Spring Boot backend
-// restaurantService.js
-export const searchRestaurants = async (query, lat, lng) => {
+export const searchRestaurants = async (query, lat, lng, filters) => {
   try {
-    const response = await fetch(`/api/search?query=${encodeURIComponent(query)}&lat=${lat}&lng=${lng}`, {
+    // Destructure filters
+    const { cuisineType, foodType, priceLevel, minRating } = filters;
+
+    // Construct query parameters
+    const queryParams = new URLSearchParams();
+    queryParams.append('query', query);
+    if (cuisineType) queryParams.append('cuisineType', cuisineType);
+    if (foodType) queryParams.append('foodType', foodType);
+    if (priceLevel) queryParams.append('priceLevel', priceLevel);
+    if (minRating) queryParams.append('minRating', minRating);
+
+    const response = await fetch(`/api/search-restaurants?${queryParams.toString()}`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -24,6 +30,7 @@ export const searchRestaurants = async (query, lat, lng) => {
     return [];
   }
 };
+
 
 
 
