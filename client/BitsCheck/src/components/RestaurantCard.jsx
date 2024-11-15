@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getPhotoUrl } from '../services/restaurantService'; // This function will generate the full photo URL based on the reference
 import { Card, CardContent, CardActions, Button, Typography, Rating, Box, Chip, Grid2 } from '@mui/material';
-
+import { Link } from 'react-router-dom'; 
 const RestaurantCard = ({ restaurant }) => {
   const [photoUrl, setPhotoUrl] = useState('');
 
@@ -35,16 +35,15 @@ const RestaurantCard = ({ restaurant }) => {
           <Grid2 item xs={12} sm={8}>
             {/* Restaurant Name and Rating */}
             <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: 1 }}>
-              <Typography
-                variant="h6"
-                component="a"
-                href={`https://www.google.com/maps/place/?q=place_id:${restaurant.place_id}`}
-                sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold', fontSize: '1rem' }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {restaurant.name}
-              </Typography>
+            <Typography
+              variant="h6"
+              component={Link}  
+              to={`/restaurant/${restaurant.name.replace(/\s+/g, '-')}`} 
+              target='_blank_'
+              sx={{ textDecoration: 'none', color: 'inherit' }}  
+            >
+              {restaurant.name}
+            </Typography>
 
               <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 0.5 }}>
                 <Rating name="read-only" value={restaurant.rating} readOnly precision={0.1} size="small" />

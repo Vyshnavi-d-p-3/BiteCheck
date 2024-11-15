@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import RestaurantCard from '../components/RestaurantCard';
 import MapContainer from '../components/Map';
-import { Box, Typography, Checkbox, FormControlLabel } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { getNearbyRestaurants, searchRestaurants } from '../services/restaurantService';
 import AppHeader from '../components/Header';
 import Footer from '../components/Footer';
-
+import InvalidSearch from '../components/InvalidSearch';
 const Home = () => {
   const [places, setPlaces] = useState([]);
   const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
+  const [isSearchValid, setIsSearchValid] = useState(true);
 
-  // Fetch user's current location and nearby restaurants
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -20,8 +20,6 @@ const Home = () => {
             lng: position.coords.longitude,
           };
           setUserLocation(location);
-
-          // Fetch nearby restaurants
           getNearbyRestaurants(location.lat, location.lng).then((results) => {
             setPlaces(results);
           });
@@ -33,23 +31,22 @@ const Home = () => {
     }
   }, []);
 
-  // Handle search query
-  const handleSearch = (query, filters) => {
+  const handleSearch = (triggeredBy,query, isValid) => {
     const { lat, lng } = userLocation;
-
+    setIsSearchValid(isValid);
     if (!lat || !lng) {
       console.warn('User location is not available. Please enable location services.');
       return;
     }
-
-    if (query) {
-      searchRestaurants(query, lat, lng, filters).then((results) => {
+    if (!isValid) {
+      return ;
+    }
+    if (query && isValid ) {
+      searchRestaurants(query, lat, lng).then((results) => {
         setPlaces(results);
       }).catch((error) => {
         console.error("Error during restaurant search:", error);
       });
-    } else {
-      console.warn("Search query is empty. Please enter a valid query.");
     }
   };
 
@@ -57,7 +54,6 @@ const Home = () => {
     <>
       {/* Header Component */}
       <AppHeader onSearch={handleSearch} />
-
       {/* Main Content */}
       <Box
         sx={{
@@ -67,18 +63,23 @@ const Home = () => {
           padding: '0 16px',
         }}
       >
-        {/* Restaurant List */}
+        {/* Restaurant List or Invalid Search Message */}
         <Box sx={{ flex: 1 }}>
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              Restaurants in the current map area
-            </Typography>
-          </Box>
-          <Box sx={{ maxHeight: '100%', overflowY: 'auto', paddingRight: 2 }}>
-            {places.map((restaurant) => (
-              <RestaurantCard key={restaurant.place_id} restaurant={restaurant} />
-            ))}
-          </Box>
+          {isSearchValid ? (
+            <>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  Restaurants in the current map area
+                </Typography>
+              </Box>
+              <Box sx={{ maxHeight: '100%', overflowY: 'auto', paddingRight: 2 }}>
+                {places.map((restaurant) => (
+                  <RestaurantCard key={restaurant.place_id} restaurant={restaurant} />
+                ))}
+              </Box>
+            </>
+          ) : (<InvalidSearch />)
+          }
         </Box>
 
         {/* Map Container */}

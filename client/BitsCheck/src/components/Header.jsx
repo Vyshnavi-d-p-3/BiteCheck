@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Box, Button, IconButton, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Button,
+  IconButton,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 import BakeryDiningIcon from '@mui/icons-material/BakeryDining';
 import SearchBar from './SearchBar';
 
@@ -10,153 +23,172 @@ const AppHeader = ({ onSearch }) => {
   const [priceLevel, setPriceLevel] = useState('');
   const [rating, setRating] = useState('');
 
+  // Snackbar state to show validation errors
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   // Handle search with filters
-  const handleSearch = (query) => {
-    const filters = {
-      cuisineType,
-      foodType,
-      priceLevel,
-      rating,
-    };
-    onSearch(query, filters);
+  const handleSearch = (triggeredBy ,query, isValid) => {
+    if (isValid) {
+      onSearch(triggeredBy,query, isValid);
+    } else {
+      setOpenSnackbar(true); // Show an error if the search term is invalid
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        backgroundColor: '#ffffff',
-        color: '#000000',
-        boxShadow: 'none',
-        borderBottom: '1px solid #d8d8d8',
-        paddingY: 1,
-      }}
-    >
-      <Toolbar
+    <>
+      <AppBar
+        position="sticky"
         sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          backgroundColor: '#ffffff',
+          color: '#000000',
+          boxShadow: 'none',
+          borderBottom: '1px solid #d8d8d8',
+          paddingY: 1,
         }}
       >
-        {/* Logo Section */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton edge="start" color="inherit" aria-label="logo" sx={{ marginRight: 1 }}>
-            <BakeryDiningIcon sx={{ color: '#d32323', fontSize: 40 }} />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ color: '#000', fontWeight: 'bold', fontSize: 24 }}
-          >
-            Bite Check
-          </Typography>
-        </Box>
-
-        {/* Filters Section */}
-        <Box sx={{ display: 'flex', gap: 2, marginX: 4 }}>
-          {/* Cuisine Type Filter */}
-          <FormControl variant="standard" sx={{ minWidth: 120 }}>
-            <InputLabel>Cuisine</InputLabel>
-            <Select
-              value={cuisineType}
-              onChange={(e) => setCuisineType(e.target.value)}
-              label="Cuisine"
-            >
-              <MenuItem value="Indian">Indian</MenuItem>
-              <MenuItem value="French">Mexican</MenuItem>
-              <MenuItem value="Italian">Italian</MenuItem>
-              <MenuItem value="French">French</MenuItem>
-              <MenuItem value="Chinese">Chinese</MenuItem>
-              <MenuItem value="French">Thai</MenuItem>
-            </Select>
-          </FormControl>
-
-          {/* Food Type Filter */}
-          <FormControl variant="standard" sx={{ minWidth: 120 }}>
-            <InputLabel>Food Type</InputLabel>
-            <Select
-              value={foodType}
-              onChange={(e) => setFoodType(e.target.value)}
-              label="Food Type"
-            >
-              <MenuItem value="Vegetarian">Vegetarian</MenuItem>
-              <MenuItem value="Vegan">Vegan</MenuItem>
-              <MenuItem value="Vegan">Gluten-Free</MenuItem>
-              <MenuItem value="Vegan">Organic</MenuItem>
-              <MenuItem value="Vegan">Seafood</MenuItem>
-              <MenuItem value="Vegan">Non-Veg</MenuItem>
-            </Select>
-          </FormControl>
-
-          {/* Price Level Filter */}
-          <FormControl variant="standard" sx={{ minWidth: 120 }}>
-            <InputLabel>Price</InputLabel>
-            <Select
-              value={priceLevel}
-              onChange={(e) => setPriceLevel(e.target.value)}
-              label="Price"
-            >
-              <MenuItem value="low">Low</MenuItem>
-              <MenuItem value="medium">Medium</MenuItem>
-              <MenuItem value="high">High</MenuItem>
-            </Select>
-          </FormControl>
-
-          {/* Rating Filter */}
-          <FormControl variant="standard" sx={{ minWidth: 120 }}>
-            <InputLabel>Rating</InputLabel>
-            <Select
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-              label="Rating"
-            >
-              <MenuItem value={1}>1 Star</MenuItem>
-              <MenuItem value={2}>2 Stars</MenuItem>
-              <MenuItem value={3}>3 Stars</MenuItem>
-              <MenuItem value={4}>4 Stars</MenuItem>
-              <MenuItem value={5}>5 Stars</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-
-        {/* Search Section */}
-        <Box
+        <Toolbar
           sx={{
             display: 'flex',
-            flex: 1,
+            justifyContent: 'space-between',
             alignItems: 'center',
-            maxWidth: '600px',
-            marginX: 4,
           }}
         >
-          <SearchBar onSearch={handleSearch} />
-        </Box>
+          {/* Logo Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ marginRight: 1 }}>
+              <BakeryDiningIcon sx={{ color: '#d32323', fontSize: 40 }} />
+            </IconButton>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ color: '#000', fontWeight: 'bold', fontSize: 24 }}
+            >
+              Bite Check
+            </Typography>
+          </Box>
 
-        {/* Auth Section */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button
-            color="inherit"
-            sx={{ textTransform: 'none', fontSize: 16, marginRight: 2 }}
-          >
-            Log In
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
+          {/* Filters Section */}
+          <Box sx={{ display: 'flex', gap: 2, marginX: 4 }}>
+            {/* Cuisine Type Filter */}
+            <FormControl variant="standard" sx={{ minWidth: 120 }}>
+              <InputLabel>Cuisine</InputLabel>
+              <Select
+                value={cuisineType}
+                onChange={(e) => {setCuisineType(e.target.value);handleSearch("Cusine",e.target.value,true)}}
+                label="Cuisine"
+              >
+                <MenuItem value="Indian">Indian</MenuItem>
+                <MenuItem value="Mexican">Mexican</MenuItem>
+                <MenuItem value="Italian">Italian</MenuItem>
+                <MenuItem value="French">French</MenuItem>
+                <MenuItem value="Chinese">Chinese</MenuItem>
+                <MenuItem value="Thai">Thai</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Food Type Filter */}
+            <FormControl variant="standard" sx={{ minWidth: 120 }}>
+              <InputLabel>Food Type</InputLabel>
+              <Select
+                value={foodType}
+                onChange={(e) => {setFoodType(e.target.value);handleSearch("FoodType",e.target.value,true)}}
+                label="Food Type"
+              >
+                <MenuItem value="Vegetarian">Vegetarian</MenuItem>
+                <MenuItem value="Vegan">Vegan</MenuItem>
+                <MenuItem value="Gluten-Free">Gluten-Free</MenuItem>
+                <MenuItem value="Organic">Organic</MenuItem>
+                <MenuItem value="Seafood">Seafood</MenuItem>
+                <MenuItem value="Non-Veg">Non-Veg</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Price Level Filter */}
+            <FormControl variant="standard" sx={{ minWidth: 120 }}>
+              <InputLabel>Price</InputLabel>
+              <Select
+                value={priceLevel}
+                onChange={(e) => {setPriceLevel(e.target.value);handleSearch("Price",e.target.value,true)}}
+                label="Price"
+              >
+                <MenuItem value="low">Low</MenuItem>
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="high">High</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Rating Filter */}
+            <FormControl variant="standard" sx={{ minWidth: 120 }}>
+              <InputLabel>Rating</InputLabel>
+              <Select
+                value={rating}
+                onChange={(e) => {setRating(e.target.value);handleSearch("Rating",e.target.value,true)}}
+                label="Rating"
+              >
+                <MenuItem value={1}>1 Star</MenuItem>
+                <MenuItem value={2}>2 Stars</MenuItem>
+                <MenuItem value={3}>3 Stars</MenuItem>
+                <MenuItem value={4}>4 Stars</MenuItem>
+                <MenuItem value={5}>5 Stars</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          {/* Search Section */}
+          <Box
             sx={{
-              textTransform: 'none',
-              fontSize: 16,
-              backgroundColor: '#d32323',
-              '&:hover': { backgroundColor: '#b81e1e' },
+              display: 'flex',
+              flex: 1,
+              alignItems: 'center',
+              maxWidth: '600px',
+              marginX: 4,
             }}
           >
-            Sign Up
-          </Button>
-        </Box>
-      </Toolbar>
-    </AppBar>
+            <SearchBar onSearch={handleSearch} />
+          </Box>
+
+          {/* Auth Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Button
+              color="inherit"
+              sx={{ textTransform: 'none', fontSize: 16, marginRight: 2 }}
+            >
+              Log In
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              sx={{
+                textTransform: 'none',
+                fontSize: 16,
+                backgroundColor: '#d32323',
+                '&:hover': { backgroundColor: '#b81e1e' },
+              }}
+            >
+              Sign Up
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Snackbar to Show Error Message */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          Invalid search term. Please enter a valid query without special characters, excessive numbers, or too many words.
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

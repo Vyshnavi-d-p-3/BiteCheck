@@ -1,18 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Home from '../src/pages/Home';
-function App() {
-  const [count, setCount] = useState(0)
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';  // Corrected import path
+import RestaurantPage from './pages/Restaurant';  // New import for detailed restaurant page
+import './App.css';
 
+function App() {
   return (
-    <>
-      <div>
-      <Home />
-      </div>
-    </>
-  )
+    <Router>
+      <Routes>
+        {/* Home Page Route */}
+        <Route path="/" element={<Home />} />
+
+        {/* Restaurant Detail Page Route */}
+        <Route path="/restaurant/:placeId" element={<RestaurantPage />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
