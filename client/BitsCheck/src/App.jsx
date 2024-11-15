@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';  // Corrected import path
-import RestaurantPage from './pages/Restaurant';  // New import for detailed restaurant page
+import RestaurantPage from './pages/Restaurant'; 
 import './App.css';
 
 function App() {

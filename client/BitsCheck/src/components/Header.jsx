@@ -12,9 +12,15 @@ import {
   InputLabel,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import BakeryDiningIcon from '@mui/icons-material/BakeryDining';
 import SearchBar from './SearchBar';
+import LoginForm from './LoginForm';
+import RegisterForm from './RegisterForm';
 
 const AppHeader = ({ onSearch }) => {
   // Filter states
@@ -26,10 +32,14 @@ const AppHeader = ({ onSearch }) => {
   // Snackbar state to show validation errors
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
+  // Dialog state for Login and Signup
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
+  const [openSignupDialog, setOpenSignupDialog] = useState(false);
+
   // Handle search with filters
-  const handleSearch = (triggeredBy ,query, isValid) => {
+  const handleSearch = (triggeredBy, query, isValid) => {
     if (isValid) {
-      onSearch(triggeredBy,query, isValid);
+      onSearch(triggeredBy, query, isValid);
     } else {
       setOpenSnackbar(true); // Show an error if the search term is invalid
     }
@@ -80,7 +90,10 @@ const AppHeader = ({ onSearch }) => {
               <InputLabel>Cuisine</InputLabel>
               <Select
                 value={cuisineType}
-                onChange={(e) => {setCuisineType(e.target.value);handleSearch("Cusine",e.target.value,true)}}
+                onChange={(e) => {
+                  setCuisineType(e.target.value);
+                  handleSearch('Cuisine', e.target.value, true);
+                }}
                 label="Cuisine"
               >
                 <MenuItem value="Indian">Indian</MenuItem>
@@ -97,7 +110,10 @@ const AppHeader = ({ onSearch }) => {
               <InputLabel>Food Type</InputLabel>
               <Select
                 value={foodType}
-                onChange={(e) => {setFoodType(e.target.value);handleSearch("FoodType",e.target.value,true)}}
+                onChange={(e) => {
+                  setFoodType(e.target.value);
+                  handleSearch('FoodType', e.target.value, true);
+                }}
                 label="Food Type"
               >
                 <MenuItem value="Vegetarian">Vegetarian</MenuItem>
@@ -114,7 +130,10 @@ const AppHeader = ({ onSearch }) => {
               <InputLabel>Price</InputLabel>
               <Select
                 value={priceLevel}
-                onChange={(e) => {setPriceLevel(e.target.value);handleSearch("Price",e.target.value,true)}}
+                onChange={(e) => {
+                  setPriceLevel(e.target.value);
+                  handleSearch('Price', e.target.value, true);
+                }}
                 label="Price"
               >
                 <MenuItem value="low">Low</MenuItem>
@@ -128,7 +147,10 @@ const AppHeader = ({ onSearch }) => {
               <InputLabel>Rating</InputLabel>
               <Select
                 value={rating}
-                onChange={(e) => {setRating(e.target.value);handleSearch("Rating",e.target.value,true)}}
+                onChange={(e) => {
+                  setRating(e.target.value);
+                  handleSearch('Rating', e.target.value, true);
+                }}
                 label="Rating"
               >
                 <MenuItem value={1}>1 Star</MenuItem>
@@ -156,8 +178,16 @@ const AppHeader = ({ onSearch }) => {
           {/* Auth Section */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Button
+              variant="outlined"
               color="inherit"
-              sx={{ textTransform: 'none', fontSize: 16, marginRight: 2 }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 16,
+                marginRight: 2,
+                borderColor: '#d8d8d8',
+                '&:hover': { borderColor: '#000', backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+              }}
+              onClick={() => setOpenLoginDialog(true)}
             >
               Log In
             </Button>
@@ -170,12 +200,57 @@ const AppHeader = ({ onSearch }) => {
                 backgroundColor: '#d32323',
                 '&:hover': { backgroundColor: '#b81e1e' },
               }}
+              onClick={() => setOpenSignupDialog(true)}
             >
               Sign Up
             </Button>
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Login Dialog */}
+      <Dialog open={openLoginDialog} onClose={() => setOpenLoginDialog(false)}>
+        <DialogTitle>
+          Sign in to Bite Check
+          <IconButton
+            aria-label="close"
+            onClick={() => setOpenLoginDialog(false)}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <LoginForm onClose={() => setOpenLoginDialog(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Signup Dialog */}
+      <Dialog open={openSignupDialog} onClose={() => setOpenSignupDialog(false)}>
+        <DialogTitle>
+          Sign up for Bite Check
+          <IconButton
+            aria-label="close"
+            onClick={() => setOpenSignupDialog(false)}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <RegisterForm onClose={() => setOpenSignupDialog(false)} />
+        </DialogContent>
+      </Dialog>
 
       {/* Snackbar to Show Error Message */}
       <Snackbar
